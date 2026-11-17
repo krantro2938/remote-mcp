@@ -1,0 +1,25 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.x"
+      - run: go vet ./... && GOOS=windows go vet ./...
+      - run: go test -race ./...
+      - run: make relay agent
+      - uses: actions/upload-artifact@v4
+        with:
+          name: agent-windows
+          path: |
+            dist/agent.exe
+            dist/agent-arm64.exe

@@ -1,0 +1,7 @@
+# remote-mcp — written by deploy/install.sh. Caddy gets the HTTPS certificate
+# automatically and proxies WebSockets (/agent) and SSE streams (/mcp).
+{$DOMAIN} {
+	reverse_proxy 127.0.0.1:8080 {
+		flush_interval -1
+	}
+}

@@ -1,0 +1,5 @@
+dist/
+*.exe
+agent.json
+*.env
+!deploy/relay.env.example
