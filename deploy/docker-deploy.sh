@@ -3,7 +3,7 @@
 #
 #   sudo ./deploy/docker-deploy.sh remote-mcp.example.com     # A record -> this VPS
 #
-# Unlike install.sh this leaves the existing Caddyfile alone: the site goes in
+# This leaves the existing Caddyfile alone: the site goes in
 # /etc/caddy/remote-mcp.Caddyfile and is pulled in with one `import` line.
 # Safe to re-run: secrets in /etc/remote-mcp/relay.env are kept, the image is
 # rebuilt and the container replaced. Re-run after `git pull` to update.

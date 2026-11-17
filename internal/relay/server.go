@@ -147,7 +147,7 @@ func (s *Server) Handler() http.Handler {
 }
 
 // downloads serves DATA_DIR/downloads (agent.exe and per-machine agent.json
-// files written by install.sh), so the agent can be fetched from any browser.
+// files written by deploy/docker-entrypoint.sh), so the agent can be fetched from any browser.
 func (s *Server) downloads(w http.ResponseWriter, r *http.Request) {
 	dir := filepath.Join(s.cfg.DataDir, "downloads")
 	name := strings.TrimPrefix(r.URL.Path, "/download/")

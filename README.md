@@ -12,29 +12,22 @@ Lets Claude see and control a Windows computer (for example, a lab PC running Vi
 * **agent.exe** is a single binary with no install and no admin rights. It connects *out* to the relay, so it works behind NAT and on university networks.
 * **relay** is one Go binary on your VPS. It keeps the agent connections, serves the MCP endpoint, stores full-resolution captures, and handles OAuth for claude.ai.
 
-## 1. Set up the VPS (Debian/Ubuntu)
+## 1. Set up the VPS
+
+Needs Docker and a Caddy that already serves your other sites. Point an A record for your domain at the VPS, then:
 
 ```bash
 git clone https://github.com/krantro2938/remote-mcp && cd remote-mcp
-sudo ./deploy/install.sh                     # domain = <your-ip>.sslip.io, no DNS needed
-# or: sudo ./deploy/install.sh relay.example.com   (A record → VPS IP)
+sudo ./deploy/docker-deploy.sh relay.example.com
 ```
 
-The script installs Go and Caddy, builds everything, generates secrets in `/etc/remote-mcp/relay.env`, starts the `remote-mcp` service, gets an HTTPS certificate, and prints:
+This builds the image (relay + `agent.exe`), runs it as the container `remote-mcp` on `127.0.0.1:18080` with captures in the volume `remote-mcp-data`, and adds the site as `/etc/caddy/remote-mcp.Caddyfile` with one `import` line, leaving the rest of the Caddyfile alone. It generates secrets in `/etc/remote-mcp/relay.env` and prints:
 
 * the MCP URL `https://<domain>/mcp`
 * the **admin password**, used for the OAuth "Allow" page, the gallery and downloads
-* agent tokens for the machines `laptop` and `labpc` (set `MACHINES="a b c"` to change the names)
+* agent tokens for the machines `laptop` and `labpc` (set `MACHINES="a b c"` on the first run to change the names)
 
-To update, run `git pull && sudo ./deploy/install.sh` again. Your secrets are kept.
-
-**Docker instead, on a VPS whose Caddy already serves other sites:**
-
-```bash
-sudo ./deploy/docker-deploy.sh relay.example.com   # A record → VPS IP
-```
-
-This builds the image (relay + `agent.exe`), runs it as the container `remote-mcp` on `127.0.0.1:18080` with captures in the volume `remote-mcp-data`, and adds the site as `/etc/caddy/remote-mcp.Caddyfile` with one `import` line, leaving the rest of the Caddyfile alone. Secrets are in `/etc/remote-mcp/relay.env`; logs: `docker logs -f remote-mcp`. Re-run it to update.
+Logs: `docker logs -f remote-mcp`. To update, run `git pull && sudo ./deploy/docker-deploy.sh <domain>` again. Your secrets are kept.
 
 ## 2. Start the agent on Windows
 
