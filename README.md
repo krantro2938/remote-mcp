@@ -28,6 +28,14 @@ The script installs Go and Caddy, builds everything, generates secrets in `/etc/
 
 To update, run `git pull && sudo ./deploy/install.sh` again. Your secrets are kept.
 
+**Docker instead, on a VPS whose Caddy already serves other sites:**
+
+```bash
+sudo ./deploy/docker-deploy.sh relay.example.com   # A record → VPS IP
+```
+
+This builds the image (relay + `agent.exe`), runs it as the container `remote-mcp` on `127.0.0.1:18080` with captures in the volume `remote-mcp-data`, and adds the site as `/etc/caddy/remote-mcp.Caddyfile` with one `import` line, leaving the rest of the Caddyfile alone. Secrets are in `/etc/remote-mcp/relay.env`; logs: `docker logs -f remote-mcp`. Re-run it to update.
+
 ## 2. Start the agent on Windows
 
 1. Open `https://<domain>/download/` in a browser (any user name + the admin password).
